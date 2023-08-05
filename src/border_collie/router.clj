@@ -7,14 +7,14 @@
          :routes       routes}))
 
 (defn navigate-to
-  [router route]
-  (swap! router assoc :active-route route))
+  [*router route]
+  (swap! *router assoc :active-route route))
 
 (defn render
-  [{:keys [router] :as dependencies}]
+  [{:keys [*router] :as dependencies}]
   (ui/dynamic
     _
-    [router @router]
+    [router @*router]
     (if-let [screen-fn ((:active-route router) (:routes router))]
       (screen-fn dependencies)
       (throw (ex-info "unknown route" {:route (:route router)})))))

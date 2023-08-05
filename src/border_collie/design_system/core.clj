@@ -1,5 +1,6 @@
 (ns border-collie.design-system.core
-  (:require [io.github.humbleui.ui.dynamic :as dynamic]
+  (:require [io.github.humbleui.paint :as paint]
+            [io.github.humbleui.ui.dynamic :as dynamic]
             [border-collie.design-system.theme :as ds.theme]
             [io.github.humbleui.ui :as ui]))
 
@@ -42,6 +43,15 @@
              8 8
              child)))))))
 
+(defn label
+  ([text] (label {:role :body-medium} text))
+  ([{:keys [role]} text]
+   (dynamic/dynamic ctx
+                    [font (-> ctx :material/theme :typography role)]
+                    (ui/label
+                      {:font font}
+                      text))))
+
 (defn with-theme
-  [theme child]
-  (ds.theme/with-theme theme child))
+  [child]
+  (ds.theme/with-theme child))
