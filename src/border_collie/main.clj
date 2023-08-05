@@ -1,23 +1,20 @@
 (ns border-collie.main
-  (:require [io.github.humbleui.ui :as ui]
+  (:require [border-collie.design-system.core :as ds]
+            [io.github.humbleui.ui :as ui]
+            [io.github.humbleui.paint :as paint]
             [border-collie.router :as router]
             [border-collie.home.screen :as home.screen]
             [border-collie.service.screen :as service.screen]
             [border-collie.state :as state]))
 
-(defonce *router (router/create :home {:home    home.screen/render
-                                       :service service.screen/render}))
+(defonce *router (router/create {:home    home.screen/render
+                                 :service service.screen/render}
+                                :home))
 
 (def app
-  (ui/default-theme
-    {}
-    (ui/column
-      (ui/padding
-        10 10
-        (ui/halign
-          0.5
-          (ui/label {:bg-color 0xFF0000FF} "Border Collie")))
-      (router/render {:router *router}))))
+  (ds/with-theme
+    {:hui.button/bg (paint/fill 0xFFFF0000)}
+    (router/render {:router *router})))
 
 ;; reset current app state on eval of this ns
 (reset! state/*app app)
