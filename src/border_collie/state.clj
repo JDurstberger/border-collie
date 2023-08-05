@@ -22,7 +22,9 @@
 (def *app
   "Current state of what's drawn in the main app window.
   Gets set any time we want to draw something new."
-  (atom {:clicks 0}))
+  (atom {:configuration
+         {:services-path "~/jdurstberger/projects/mypulse"}
+         :services []}))
 
 (defn redraw!
   "Redraws the window with the current app state."

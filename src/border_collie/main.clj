@@ -1,25 +1,23 @@
 (ns border-collie.main
   (:require [io.github.humbleui.ui :as ui]
+            [border-collie.router :as router]
+            [border-collie.home.screen :as home.screen]
+            [border-collie.service.screen :as service.screen]
             [border-collie.state :as state]))
 
-(defonce *text-field (atom {:text "Start"}))
-
-(defn on-load-click
-  []
-  (println "CLICK"))
+(defonce *router (router/create :home {:home    home.screen/render
+                                       :service service.screen/render}))
 
 (def app
-  "Main app definition."
   (ui/default-theme
     {}
-    (ui/center
-      (ui/row
-        (ui/text-field *text-field)
-        (ui/button on-load-click
-                   (ui/label "Load"))
-
-        (ui/dynamic _ [text (:text @*text-field)]
-                    (ui/label (str text)))))))
+    (ui/column
+      (ui/padding
+        10 10
+        (ui/halign
+          0.5
+          (ui/label {:bg-color 0xFF0000FF} "Border Collie")))
+      (router/render {:router *router}))))
 
 ;; reset current app state on eval of this ns
 (reset! state/*app app)
