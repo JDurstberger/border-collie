@@ -10,7 +10,7 @@
   (commands/load-services *state))
 
 (defn create-service-card
-  [{:keys [*router]} service]
+  [{:keys [*router]} [service-key service]]
   (ui/padding
     8 8
     (ds/card
@@ -20,7 +20,8 @@
           (ds/label {:role :body-medium} (:name service)))
         (ui/gap 0 8)
         (ui/row
-          [:stretch 1 (ds/button #(router/navigate-to *router :service) "Details")]
+          [:stretch 1 (ds/button #(router/navigate-to *router {:route :service
+                                                               :extras {:service-key service-key}}) "Details")]
           (ui/gap 8 0)
           [:stretch 1 (ds/button nil "Run")])))))
 
@@ -31,7 +32,7 @@
   (ds/screen
     (ui/dynamic
       _
-      [services (:services @*state)]
+      [services (-> @*state :services)]
       (ui/vscroll
         (ui/column
           (map (partial create-service-card dependencies) services))))))

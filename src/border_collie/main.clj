@@ -8,7 +8,7 @@
 
 (defonce *router (router/create {:home    home.screen/render
                                  :service service.screen/render}
-                                :home))
+                                {:route :home}))
 
 (def app
   (ds/with-theme

@@ -5,8 +5,7 @@
   [path]
   (->> (io/file path)
        (.listFiles)
-       (filter #(re-matches #".*-(service|backend|gateway)$" (.getName %)))
-       (sort-by (fn [file] (.getName file)))))
+       (filter #(re-matches #".*-(service|backend|gateway)$" (.getName %)))))
 
 (defn service-file->service
   [service-file]
@@ -18,5 +17,8 @@
   (when (empty? (:services @*state))
     (let [configuration (:configuration @*state)]
       (let [service-files (find-all-service-directories (:services-path configuration))
-            services (map service-file->service service-files)]
+            services (->> service-files
+                          (map service-file->service)
+                          (map (fn [service] [(:name service) service]))
+                          (into (sorted-map)))]
         (swap! *state assoc :services services)))))
