@@ -4,6 +4,7 @@
 
 (defn find-all-service-directories
   [path]
+  (println "Loading services from " path)
   (->> (io/file path)
        (.listFiles)
        (filter #(re-matches #".*-(service|backend|gateway)$" (.getName %)))))

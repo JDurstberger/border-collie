@@ -24,12 +24,6 @@
   Gets set any time we want to draw something new."
   (atom nil))
 
-(def *state
-  (atom {:configuration
-         {:services-path "/Users/jdurstberger/projects/mypulse"}
-         :services      {}
-         :service-tasks {}}))
-
 (defn redraw!
   "Redraws the window with the current app state."
   []
