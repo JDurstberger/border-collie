@@ -1,5 +1,6 @@
 (ns border-collie.home.commands
-  (:require [clojure.java.io :as io]))
+  (:require [border-collie.home.service-task :as service-task]
+            [clojure.java.io :as io]))
 
 (defn find-all-service-directories
   [path]
@@ -10,7 +11,7 @@
 (defn service-file->service
   [service-file]
   {:file service-file
-   :id (keyword (.getName service-file))
+   :id   (keyword (.getName service-file))
    :name (.getName service-file)})
 
 (defn load-services
@@ -23,3 +24,18 @@
                           (map (fn [service] [(:id service) service]))
                           (into (sorted-map)))]
         (swap! *state assoc :services services)))))
+
+(defn start-service
+  [*state service]
+  (swap! *state assoc-in [:service-tasks (:id service)] (service-task/run-service service)) )
+
+(defn stop-service
+  [*state service service-task]
+  (service-task/stop-service service-task)
+  (swap! *state update :service-tasks dissoc (:id service)))
+
+(defn stop-all-services
+  [*state]
+  (doseq [service-task (-> @*state :service-tasks)]
+    (service-task/stop-service service-task))
+  (swap! *state assoc :service-tasks {}))

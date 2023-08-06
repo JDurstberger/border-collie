@@ -24,4 +24,3 @@
                                "app:start")]
     {:process process
      :channel channel}))
-

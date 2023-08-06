@@ -1,22 +1,21 @@
 (ns border-collie.home.service-card
   (:require [border-collie.design-system.core :as ds]
+            [border-collie.home.commands :as commands]
             [border-collie.home.service-task :as service-task]
             [io.github.humbleui.ui :as ui]))
 
 (defn create-on-run
   [*state service]
   (fn []
-    (swap! *state assoc-in [:service-tasks (:id service)] (service-task/run-service service))))
+    (commands/start-service *state service)))
 
 (defn create-on-stop
   [*state service service-task]
   (fn []
-    (service-task/stop-service service-task)
-    (swap! *state update :service-tasks dissoc (:id service))))
+    (commands/stop-service *state service service-task)))
 
 (defn create-component
   [{:keys [*state]} service]
-  (println service)
   (ui/dynamic
     _
     [service-task (get-in @*state [:service-tasks (:id service)])]
