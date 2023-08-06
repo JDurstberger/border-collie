@@ -1,0 +1,14 @@
+Checking for system dependencies.
+All system dependencies present. Continuing.
+Installing git hooks.
+Installing bundler.
+Installing ruby dependencies.
+Starting rake.
+Logging into vault...
+Checking for valid token...
+Valid token found.
+Provisioning appointment-service-local-database container
+Checking to see if appointment-service-local-database exists...
+appointment-service-local-database does not exist. Continuing.
+Checking if image postgres:11.19 is available locally...
+Image postgres:11.19 not found. Pulling.

@@ -10,6 +10,7 @@
 (defn service-file->service
   [service-file]
   {:file service-file
+   :id (keyword (.getName service-file))
    :name (.getName service-file)})
 
 (defn load-services
@@ -19,6 +20,6 @@
       (let [service-files (find-all-service-directories (:services-path configuration))
             services (->> service-files
                           (map service-file->service)
-                          (map (fn [service] [(:name service) service]))
+                          (map (fn [service] [(:id service) service]))
                           (into (sorted-map)))]
         (swap! *state assoc :services services)))))

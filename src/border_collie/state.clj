@@ -27,7 +27,8 @@
 (def *state
   (atom {:configuration
          {:services-path "/Users/jdurstberger/projects/mypulse"}
-         :services nil}))
+         :services      {}
+         :service-tasks {}}))
 
 (defn redraw!
   "Redraws the window with the current app state."
