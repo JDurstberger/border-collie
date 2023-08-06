@@ -1,31 +1,40 @@
 (ns border-collie.home.screen
-  (:require [border-collie.router :as router]
-            [border-collie.design-system.core :as ds]
-            [border-collie.home.commands :as commands]
-            [io.github.humbleui.ui :as ui]
-            [io.github.humbleui.ui.dynamic :as dynamic]))
+  (:require
+    [border-collie.design-system.core :as ds]
+    [border-collie.home.commands :as commands]
+    [border-collie.router :as router]
+    [io.github.humbleui.ui :as ui]))
 
 (defn on-render
   [*state]
   (commands/load-services *state))
 
 (defn create-service-card
-  [service]
-  (ds/card
-    (ui/halign
-      0.5
-      (ds/label {:role :body-medium} (:name service)))))
+  [{:keys [*router]} service]
+  (ui/padding
+    8 8
+    (ds/card
+      (ui/column
+        (ui/halign
+          0.5
+          (ds/label {:role :body-medium} (:name service)))
+        (ui/gap 0 8)
+        (ui/row
+          [:stretch 1 (ds/button #(router/navigate-to *router :service) "Details")]
+          (ui/gap 8 0)
+          [:stretch 1 (ds/button nil "Run")])))))
+
 
 (defn render
-  [{:keys [*state]}]
+  [{:keys [*state] :as dependencies}]
   (on-render *state)
   (ds/screen
     (ui/dynamic
       _
       [services (:services @*state)]
-      (do
+      (ui/vscroll
         (ui/column
-          (map create-service-card services))))))
+          (map (partial create-service-card dependencies) services))))))
 
 
 

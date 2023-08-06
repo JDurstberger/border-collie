@@ -5,7 +5,8 @@
   [path]
   (->> (io/file path)
        (.listFiles)
-       (filter #(re-matches #".*-(service|backend|gateway)$" (.getName %)))))
+       (filter #(re-matches #".*-(service|backend|gateway)$" (.getName %)))
+       (sort-by (fn [file] (.getName file)))))
 
 (defn service-file->service
   [service-file]

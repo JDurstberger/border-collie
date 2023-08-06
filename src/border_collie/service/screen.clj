@@ -4,9 +4,9 @@
             [io.github.humbleui.ui :as ui]))
 
 (defn render
-  [{:keys [router]}]
+  [{:keys [*router]}]
   (ds/screen
     (ui/column
       (ui/label "Service")
-      (ds/button (fn [] (router/navigate-to router :home))
+      (ds/button (fn [] (router/navigate-to *router :home))
                  "Back"))))
