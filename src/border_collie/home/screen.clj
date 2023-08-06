@@ -16,6 +16,9 @@
     (ui/dynamic
       _
       [services (-> @*state :services (vals))]
-      (ui/vscroll
-        (ui/column
-          (map (partial service-card/create-component dependencies) services))))))
+      (if (empty? services)
+        (ui/center
+          (ds/label {:role :headline-medium} "No services found."))
+        (ui/vscroll
+          (ui/column
+            (map (partial service-card/create-component dependencies) services)))))))
