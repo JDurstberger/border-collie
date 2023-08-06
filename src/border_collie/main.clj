@@ -3,11 +3,11 @@
             [io.github.humbleui.ui :as ui]
             [border-collie.router :as router]
             [border-collie.home.screen :as home.screen]
-            [border-collie.service.screen :as service.screen]
+            [border-collie.settings.screen :as settings.screen]
             [border-collie.state :as state]))
 
 (defonce *router (router/create {:home    home.screen/render
-                                 :service service.screen/render}
+                                 :settings settings.screen/render}
                                 {:route :home}))
 
 (def app

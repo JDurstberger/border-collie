@@ -43,3 +43,7 @@
 (defn start
   [& opts+args]
   (apply process/start opts+args))
+
+(defn to-file
+  [f & opts]
+  (process/to-file f opts))
