@@ -1,5 +1,7 @@
 (ns border-collie.home.commands
-  (:require [border-collie.home.service-task :as service-task]
+  (:require [border-collie.app.state :as app-state]
+            [border-collie.home.service-task :as service-task]
+            [clojure.core.async :as async]
             [clojure.java.io :as io]))
 
 (defn find-all-service-directories
@@ -24,16 +26,24 @@
                           (map service-file->service)
                           (map (fn [service] [(:id service) service]))
                           (into (sorted-map)))]
-        (swap! *state assoc :services services)))))
+        (app-state/upsert-services *state services)))))
 
 (defn start-service
   [*state service]
-  (swap! *state assoc-in [:service-tasks (:id service)] (service-task/run-service service)) )
+  (let [service-task (service-task/run-service service)]
+
+    (async/go
+      (println (:name service) " started")
+      (let [exit-code @(:process service-task)]
+        (println (:name service) " stopped with " exit-code)
+        (app-state/remove-service-task *state service-task)))
+
+    (app-state/upsert-service-task *state service-task)))
 
 (defn stop-service
-  [*state service service-task]
+  [*state service-task]
   (service-task/stop-service service-task)
-  (swap! *state update :service-tasks dissoc (:id service)))
+  (app-state/remove-service-task *state service-task))
 
 (defn stop-all-services
   [*state]

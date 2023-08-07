@@ -22,5 +22,6 @@
                                 :dir (.getAbsolutePath (:file service))}
                                "rake"
                                "app:start")]
-    {:process process
-     :channel channel}))
+    {:service-id (:id service)
+     :process    process
+     :channel    channel}))
