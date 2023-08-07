@@ -6,6 +6,10 @@
   [*state services]
   (swap! *state assoc :services services))
 
+(defn upsert-service-tasks
+  [*state service-tasks]
+  (swap! *state assoc :service-tasks service-tasks))
+
 (defn upsert-service-task
   [*state service-task]
   (swap! *state

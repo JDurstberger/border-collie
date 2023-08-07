@@ -26,7 +26,8 @@
                           (map service-file->service)
                           (map (fn [service] [(:id service) service]))
                           (into (sorted-map)))]
-        (app-state/upsert-services *state services)))))
+        (app-state/upsert-services *state services)
+        (app-state/upsert-service-tasks *state (into {} (map service-task/create services)))))))
 
 (defn start-service
   [*state service]
@@ -34,16 +35,20 @@
 
     (async/go
       (println (:name service) " started")
-      (let [exit-code @(:process service-task)]
-        (println (:name service) " stopped with " exit-code)
-        (app-state/remove-service-task *state service-task)))
+
+      @(:process service-task)
+
+      (let [service-task (app-state/get-service-task *state service)
+            new-status (if (= (:status service-task) :stopping) :stopped :died)]
+        (println (:name service) (name new-status))
+        (app-state/upsert-service-task *state (assoc service-task :status new-status))))
 
     (app-state/upsert-service-task *state service-task)))
 
 (defn stop-service
   [*state service-task]
-  (service-task/stop-service service-task)
-  (app-state/remove-service-task *state service-task))
+  (app-state/upsert-service-task *state (assoc service-task :status :stopping))
+  (service-task/stop-service service-task))
 
 (defn stop-all-services
   [*state]

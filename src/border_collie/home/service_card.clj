@@ -4,6 +4,15 @@
             [border-collie.home.commands :as commands]
             [io.github.humbleui.ui :as ui]))
 
+(defn service-task-status->text
+  [service-task]
+  (case (:status service-task)
+    :stopping "stopping"
+    :stopped "stopped"
+    :died "died"
+    :running "running"
+    ""))
+
 (defn create-on-run
   [*state service]
   (fn []
@@ -28,8 +37,12 @@
             (ds/label {:role :body-medium} (:name service)))
           (ui/gap 0 8)
           (ui/halign
+            0.5
+            (ds/label {:role :body-small} (service-task-status->text service-task)))
+          (ui/gap 0 8)
+          (ui/halign
             1
             (ui/row
-              (if service-task
+              (if (= (:status service-task) :running)
                 (ds/button (create-on-stop *state service-task) "Stop")
                 (ds/button (create-on-run *state service) "Run")))))))))
