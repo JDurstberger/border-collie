@@ -1,0 +1,1 @@
+clj -M -m border-collie.main
