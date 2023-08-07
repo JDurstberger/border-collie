@@ -13,7 +13,7 @@
 (defn create-default-theme
   [scale]
   (let [font-regular (typeface/make-from-resource "border_collie/design_system/fonts/Roboto-Regular.ttf")
-        font-medium (typeface/make-from-resource "border_collie/design_system/fonts/Roboto-Regular.ttf")]
+        font-medium (typeface/make-from-resource "border_collie/design_system/fonts/Roboto-Medium.ttf")]
     {:colors     {:primary      0xFF28A456
                   :background   0xFFFFFFFF
                   :surface      0xFFFFFFFF

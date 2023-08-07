@@ -2,14 +2,26 @@
   (:require [border-collie.app.state :as app-state]
             [border-collie.home.service-task :as service-task]
             [clojure.core.async :as async]
+            [clojure.string :as string]
             [clojure.java.io :as io]))
 
+(defn matches-service-pattern?
+  [file]
+  (re-matches #".*-(service|backend|gateway)$" (.getName file)))
+
+(defn not-ignored?
+  [ignore-services file]
+  (let [name (.getName file)
+        services-to-ignore (into #{} (string/split ignore-services #","))]
+    (not (services-to-ignore name))))
+
 (defn find-all-service-directories
-  [path]
-  (println "Loading services from " path)
-  (->> (io/file path)
+  [{:keys [services-path ignore-services]}]
+  (println "Loading services from " services-path)
+  (->> (io/file services-path)
        (.listFiles)
-       (filter #(re-matches #".*-(service|backend|gateway)$" (.getName %)))))
+       (filter matches-service-pattern?)
+       (filter (partial not-ignored? ignore-services))))
 
 (defn service-file->service
   [service-file]
@@ -21,7 +33,7 @@
   [*state]
   (when (empty? (:services @*state))
     (let [configuration (:configuration @*state)]
-      (let [service-files (find-all-service-directories (:services-path configuration))
+      (let [service-files (find-all-service-directories configuration)
             services (->> service-files
                           (map service-file->service)
                           (map (fn [service] [(:id service) service]))

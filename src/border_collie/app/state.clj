@@ -15,10 +15,6 @@
   (swap! *state
          assoc-in [:service-tasks (:service-id service-task)] service-task))
 
-(defn remove-service-task
-  [*state service-task]
-  (swap! *state update :service-tasks dissoc (:service-id service-task)) )
-
 (defn get-service-task
   [*state service]
   (get-in @*state [:service-tasks (:id service)]))

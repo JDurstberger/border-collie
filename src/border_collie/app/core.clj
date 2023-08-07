@@ -8,7 +8,6 @@
 
 (defn init
   []
-  ;TODO go to home!
   (let [initial-screen (if (configuration/exists?) :home :settings)
         config (configuration/init)]
     (state/init config)
