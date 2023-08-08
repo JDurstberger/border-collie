@@ -1,9 +1,10 @@
 (ns border-collie.settings.commands
   (:require
-    [border-collie.shared.configuration :as configuration]))
+    [border-collie.shared.configuration :as configuration]
+    [border-collie.app.state :as app-state]))
 
 (defn save
   [*state services-path ignore-services]
-  (swap! *state update :configuration merge {:services-path   services-path
-                                             :ignore-services ignore-services})
-  (configuration/write-to-file (:configuration @*state)))
+  (app-state/swap-configuration! *state #(configuration/update-configuration %
+                                                                             {:services-path   services-path
+                                                                              :ignore-services ignore-services})))

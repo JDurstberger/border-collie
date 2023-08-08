@@ -19,6 +19,14 @@
   [*state service]
   (get-in @*state [:service-tasks (:id service)]))
 
+(defn get-configuration
+  [*state]
+  (:configuration @*state))
+
+(defn swap-configuration!
+  [*state f]
+  (swap! *state update :configuration f))
+
 (defn init
   [configuration]
   (reset! *state {:configuration configuration

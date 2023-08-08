@@ -1,5 +1,6 @@
 (ns border-collie.settings.screen
   (:require [border-collie.design-system.core :as ds]
+            [border-collie.router :as router]
             [border-collie.settings.commands :as commands]
             [io.github.humbleui.core :as core]
             [io.github.humbleui.ui :as ui]))
@@ -14,14 +15,15 @@
     (swap! *ignore-services-text-field assoc :text (:ignore-services configuration))))
 
 (defn create-on-save
-  [*state]
+  [{:keys [*router *state]}]
   (fn []
     (commands/save *state
                    (-> @*services-path-text-field :text)
-                   (-> @*ignore-services-text-field :text))))
+                   (-> @*ignore-services-text-field :text))
+    (router/navigate-to *router :home)))
 
 (defn render
-  [{:keys [*state]}]
+  [{:keys [*state] :as dependencies}]
   (on-render *state)
   (ds/screen
     (ui/focus-controller
@@ -36,5 +38,5 @@
         (ui/gap 0 8)
         (ui/text-field *ignore-services-text-field)
         (ui/gap 0 16)
-        (ds/button (create-on-save *state) "Save")))))
+        (ds/button (create-on-save dependencies) "Save")))))
 

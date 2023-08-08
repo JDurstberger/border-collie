@@ -4,8 +4,10 @@
 
 (def home-directory (io/file (System/getProperty "user.home")))
 (def config-file (io/file home-directory ".border-collie/config.edn"))
+(def paths [:services-path])
 
-(def base-config {:services-path ""})
+(def base-config {:services-path   ""
+                  :ignore-services ""})
 
 (defn expand-home-directory
   [path]
@@ -29,7 +31,22 @@
     (read-string (slurp config-file))
     (write-to-file base-config)))
 
+(defn expand-paths
+  [configuration]
+  (reduce (fn [configuration path-key]
+            (if (path-key configuration)
+              (update configuration path-key expand-home-directory)
+              configuration))
+          configuration
+          paths))
+
+(defn update-configuration
+  [current-configuration updates]
+  (let [new-configuration (merge current-configuration updates)]
+    (write-to-file new-configuration)
+    (expand-paths new-configuration)))
+
 (defn init
   []
   (-> (load-from-file)
-      (update :services-path expand-home-directory)))
+      (expand-paths)))

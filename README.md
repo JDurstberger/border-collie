@@ -4,11 +4,9 @@
 ### TODO
 
 - Test service is running by calling discovery
-- Remove service-task when service process dies by itself
 - Add stop-all button
-- Allow pulling service
+- Allow pulling service/s
 - Allow cloning new services
-- Allow setting services path
 - Check if service has successfully started
-- Allow ignoring services
-- Allow configuring ignored services
+- Allow navigating to settings
+- Show warning and error counts on services
