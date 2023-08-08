@@ -1,12 +1,19 @@
 (ns border-collie.home.service-task
-  (:require [border-collie.shared.process :as process]
+  (:require [border-collie.logs :as logs]
+            [border-collie.shared.command :as command]
             [clojure.java.io :as io]))
+
+(defn clean-up
+  [service-task]
+  (logs/shutdown (:log-reader service-task)))
 
 (defn stop-service
   [service-task]
-  (when-let [process (-> service-task :process :process)]
-    (if (process/alive? process)
-      (process/stop-process-and-children process)
+  (when-let [command (:command service-task)]
+    (if (command/alive? command)
+      (do
+        (command/stop command)
+        (clean-up service-task))
       (println "Service has already exited"))))
 
 (defn create
@@ -18,11 +25,13 @@
   [service]
   (let [log-file (io/file (str "logs/" (:name service)))
         _ (io/make-parents log-file)
-        process (process/start {:out (process/to-file log-file)
+        command (command/start {:out (command/to-file log-file)
                                 :err :stdout
                                 :dir (.getAbsolutePath (:file service))}
                                "rake"
-                               "app:start")]
+                               "app:start")
+        log-reader (logs/create-file-reader log-file (fn [_]))]
     {:service-id (:id service)
      :status     :running
-     :process    process}))
+     :command    command
+     :log-reader log-reader}))

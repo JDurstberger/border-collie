@@ -7,7 +7,6 @@
 
 (defn on-render
   [*state]
-  (println @*state)
   (commands/load-services *state))
 
 (defn render

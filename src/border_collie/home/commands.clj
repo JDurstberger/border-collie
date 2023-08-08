@@ -45,14 +45,17 @@
   [*state service]
   (let [service-task (service-task/run-service service)]
 
-    (async/go
+    (future
       (println (:name service) " started")
 
-      @(:process service-task)
+      @(:command service-task)
 
       (let [service-task (app-state/get-service-task *state service)
             new-status (if (= (:status service-task) :stopping) :stopped :died)]
         (println (:name service) (name new-status))
+        (when (= :died new-status)
+          (service-task/clean-up service-task))
+
         (app-state/upsert-service-task *state (assoc service-task :status new-status))))
 
     (app-state/upsert-service-task *state service-task)))
