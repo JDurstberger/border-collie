@@ -1,25 +1,26 @@
 (ns border-collie.home.commands
   (:require [border-collie.app.state :as app-state]
             [border-collie.home.service-task :as service-task]
-            [clojure.core.async :as async]
             [clojure.string :as string]
-            [clojure.java.io :as io]))
+            [me.raynes.fs :as fs]))
 
 (defn matches-service-pattern?
   [file]
-  (re-matches #".*-(service|backend|gateway)$" (.getName file)))
+  (and (fs/directory? file)
+       (re-matches #".*-(service|backend|gateway)$" (fs/name file))))
 
+;;TODO handle ignore-services not set in config
 (defn not-ignored?
   [ignore-services file]
-  (let [name (.getName file)
+  (let [name (fs/name file)
         services-to-ignore (into #{} (string/split ignore-services #","))]
     (not (services-to-ignore name))))
 
 (defn find-all-service-directories
   [{:keys [services-path ignore-services]}]
   (println "Loading services from " services-path)
-  (->> (io/file services-path)
-       (.listFiles)
+  (->> (fs/file services-path)
+       (fs/list-dir)
        (filter matches-service-pattern?)
        (filter (partial not-ignored? ignore-services))))
 

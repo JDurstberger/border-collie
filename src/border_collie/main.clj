@@ -3,8 +3,7 @@
             [border-collie.home.commands :as home.commands]
             [border-collie.app.state :as app-state]
             [border-collie.app.core :as app]
-            [border-collie.state :as state]
-            [border-collie.logs :as logs]))
+            [border-collie.state :as state]))
 
 ;; reset current app state on eval of this ns
 (reset! state/*app (app/init))

@@ -1,41 +1,44 @@
 (ns border-collie.shared.configuration
-  (:require [clojure.java.io :as io]
-            [clojure.string :as string]))
+  (:require
+    [border-collie.shared.environment :as environment]
+    [me.raynes.fs :as fs]))
 
-(def home-directory (io/file (System/getProperty "user.home")))
-(def config-file (io/file home-directory ".border-collie/config.edn"))
+(defn get-home-directory
+  []
+  (or (fs/file (environment/get-variable "BORDER_COLLIE_HOME"))
+      (fs/file (fs/home) ".border-collie")))
+
+(defn get-configuration-file
+  []
+  (fs/file (get-home-directory) "configuration.edn"))
+
 (def paths [:services-path])
 
 (def base-config {:services-path   ""
                   :ignore-services ""})
 
-(defn expand-home-directory
-  [path]
-  (if (string/starts-with? path "~/")
-    (string/replace-first path #"^~" (.getAbsolutePath home-directory))
-    path))
-
 (defn write-to-file
   [configuration]
-  (io/make-parents config-file)
-  (spit config-file (pr-str configuration))
-  configuration)
+  (let [configuration-file (get-configuration-file)]
+    (fs/mkdirs (fs/parent configuration-file))
+    (spit configuration-file (pr-str configuration))
+    configuration))
 
 (defn exists?
   []
-  (.exists config-file))
+  (.exists (get-configuration-file)))
 
 (defn load-from-file
   []
   (if (exists?)
-    (read-string (slurp config-file))
+    (read-string (slurp (get-configuration-file)))
     (write-to-file base-config)))
 
 (defn expand-paths
   [configuration]
   (reduce (fn [configuration path-key]
             (if (path-key configuration)
-              (update configuration path-key expand-home-directory)
+              (update configuration path-key (fn [path] (.getAbsolutePath (fs/expand-home path))))
               configuration))
           configuration
           paths))

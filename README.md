@@ -10,3 +10,4 @@
 - Check if service has successfully started
 - Allow navigating to settings
 - Show warning and error counts on services
+- Add favourites
