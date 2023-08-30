@@ -13,7 +13,4 @@ workflows:
   version: 2
   pipeline:
     jobs:
-      - build
-      - test:
-          requires:
-            - build
+      - test
